@@ -1,5 +1,7 @@
 package android.math.uni.lodz.pl.webservices.service;
 
+import android.math.uni.lodz.pl.webservices.model.Post;
+
 public interface ClientService {
 
     /**
@@ -25,4 +27,12 @@ public interface ClientService {
      * @param id id of post which comment will be shown.
      */
     void displayCommentsForPostWithId(String id);
+
+    /**
+     * Sends new post to web service.
+     *
+     * @param title post title.
+     * @param body post body.
+     */
+    void sendPost(String title, String body);
 }

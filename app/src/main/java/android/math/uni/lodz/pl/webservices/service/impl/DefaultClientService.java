@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.text.Html;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -18,10 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +37,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Service used for connect to http endpoint and load data from response to activity view.
+ * Service used for get and send data from and to selected endpoints.
  *
  * @param <T> Response type.
  * @author Piotr Krzyminski
@@ -45,36 +50,111 @@ public class DefaultClientService<T extends Displayable> implements ClientServic
 
     private TextView view; // component where data will be loaded.
 
+    private ObjectMapper mapper;
+
     public DefaultClientService(TextView view) {
         this.view = view;
+        mapper = new ObjectMapper();
     }
 
     @Override
     public void displayAllPosts() {
-        setResponseType(Post.class);
+        setDataType(Post.class);
         new GetDataTask().execute(EndpointsConstants.Get.POSTS);
     }
 
     @Override
     public void displayPostWithId(String id) {
-        setResponseType(Post.class);
+        setDataType(Post.class);
         new GetDataTask().execute(EndpointsConstants.Get.POST + id);
     }
 
     @Override
     public void displayAllComments() {
-        setResponseType(Comment.class);
+        setDataType(Comment.class);
         new GetDataTask().execute(EndpointsConstants.Get.COMMENTS);
     }
 
     @Override
     public void displayCommentsForPostWithId(String id) {
-        setResponseType(Comment.class);
+        setDataType(Comment.class);
         new GetDataTask().execute(EndpointsConstants.Get.COMMENT + id);
     }
 
-    private void setResponseType(Class responseType) {
+    @Override
+    public void sendPost(String title, String body) {
+        setDataType(Post.class);
+
+        final Post post = new Post(1,1, title, body);
+        try {
+
+            String jsonData = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(post);
+            new PostDataTask().execute(EndpointsConstants.Post.POST, jsonData);
+        } catch (JsonProcessingException e) {
+            LOG.error("Data couldn't be send", e);
+        }
+    }
+
+    private void setDataType(Class responseType) {
         this.responseType = responseType;
+    }
+
+    /**
+     * Async task for connecting to http endpoint. Allows to send data in json format
+     * to selected url.
+     */
+    private class PostDataTask extends AsyncTask<String, Void, Void> {
+
+        private HttpsURLConnection httpsURLConnection;
+        private boolean postSend = false;
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                final URL url = new URL(strings[0]);
+                final String jsonData = strings[1];
+                httpsURLConnection = (HttpsURLConnection) url.openConnection();
+                httpsURLConnection.setRequestMethod("POST");
+
+                OutputStream outputStream = new BufferedOutputStream(httpsURLConnection.getOutputStream());
+                writeData(outputStream, jsonData);
+
+                httpsURLConnection.connect();
+                postSend = true;
+            } catch (MalformedURLException e) {
+                LOG.error("Error: ", e);
+            } catch (IOException e) {
+                LOG.error("Connection failed: ", e);
+            } finally {
+                httpsURLConnection.disconnect();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(postSend) {
+                view.setText(R.string.post_send_success);
+            } else {
+                view.setText(R.string.post_send_failed);
+            }
+        }
+
+        /**
+         * Creates buffered writer and write json data.
+         *
+         * @param outputStream output stream from url.
+         * @param data         data to write.
+         * @throws IOException IO exception.
+         */
+        private void writeData(OutputStream outputStream, String data) throws IOException {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"))) {
+                writer.write(data);
+                writer.flush();
+            }
+        }
     }
 
     /**
@@ -100,9 +180,9 @@ public class DefaultClientService<T extends Displayable> implements ClientServic
                     return getPostsFromJson(json);
                 }
             } catch (MalformedURLException e) {
-                LOG.error("Error: {}", e.getMessage());
+                LOG.error("Error: ", e);
             } catch (IOException e) {
-                LOG.warn("Connection failed");
+                LOG.warn("Connection failed: ", e);
             } finally {
                 httpsURLConnection.disconnect();
             }
@@ -126,7 +206,6 @@ public class DefaultClientService<T extends Displayable> implements ClientServic
          */
         private List<T> getPostsFromJson(String jsonResponse) {
             List<T> posts = new ArrayList<>();
-            ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
             TypeFactory typeFactory = mapper.getTypeFactory();
 

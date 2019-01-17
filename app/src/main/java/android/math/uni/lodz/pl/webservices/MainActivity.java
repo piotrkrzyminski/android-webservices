@@ -1,6 +1,7 @@
 package android.math.uni.lodz.pl.webservices;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.math.uni.lodz.pl.webservices.service.ClientService;
 import android.math.uni.lodz.pl.webservices.service.impl.DefaultClientService;
 import android.os.Bundle;
@@ -89,5 +90,13 @@ public class MainActivity extends Activity {
                 // do nothing
             }
         });
+    }
+
+    /**
+     * Starts add post activity.
+     */
+    public void startCreatePostActivity(View view) {
+        final Intent intent = new Intent(this, AddPostActivity.class);
+        startActivity(intent);
     }
 }

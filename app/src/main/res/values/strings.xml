@@ -8,4 +8,11 @@
     <string name="wyszukaj_komentarz_po_id">Comment id</string>
     <string name="wszystkie_posty">Posty</string>
     <string name="wszystkie_komentarze">Komentarze</string>
+    <string name="post_send_success">Post wysłany</string>
+    <string name="post_send_failed">Nastąpił błąd. Nie udało się wysłać posta</string>
+    <string name="post_send_button">Wyślij</string>
+    <string name="post_title_name">Tytuł</string>
+    <string name="post_body_name">Treść</string>
+    <string name="post_empty_data">Tytuł i treść nie mogą być puste</string>
+    <string name="add_post_button">Dodaj nowy post</string>
 </resources>
