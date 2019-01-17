@@ -1,0 +1,19 @@
+
+P
+ app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
+Å
+Qapp/src/main/java/android/math/uni/lodz/pl/webservices/service/ClientService.java,3\7\375acfa4c750b54de1a7962bc55207f04ab6924f
+x
+Happ/src/main/java/android/math/uni/lodz/pl/webservices/MainActivity.java,7\5\751a67666599b6824bff607293c37b370f007d63
+v
+Fapp/src/main/java/android/math/uni/lodz/pl/webservices/model/Post.java,7\8\782c533c2969cb37f333b195fc3918494942953e
+@
+app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
+ç
+]app/src/main/java/android/math/uni/lodz/pl/webservices/service/impl/DefaultClientService.java,0\8\08a716f60afcc2a041b41c7884420c20a4dba0a1
+y
+Iapp/src/main/java/android/math/uni/lodz/pl/webservices/model/Comment.java,4\3\43745bde115426b5a54e594ea93ce58c0ce7f35f
+}
+Mapp/src/main/java/android/math/uni/lodz/pl/webservices/model/Displayable.java,9\c\9cbf6bb2d566fb3ed8469a0f25928dc4ca035e66
+Ü
+Vapp/src/main/java/android/math/uni/lodz/pl/webservices/service/EndpointsConstants.java,8\7\873c6206294bc6e8ceb4564fb0704b9dfbfb5583

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WebServices</string>
+    <string name="load_app_posts_message">Wczytywanie wszystkich postów</string>
+    <string name="no_posts">Brak wyników</string>
+    <string name="input_post_id">ID posta</string>
+    <string name="comments_switch">Komentarze</string>
+    <string name="wyszukaj_post_po_id">Post id</string>
+    <string name="wyszukaj_komentarz_po_id">Comment id</string>
+    <string name="wszystkie_posty">Posty</string>
+    <string name="wszystkie_komentarze">Komentarze</string>
+</resources>
